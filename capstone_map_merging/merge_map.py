@@ -20,6 +20,10 @@ class MergeMapNode(Node):
         self.yd = [0] * self.n
 
         self.maps_list = [f"map{i}" for i in range(self.n)] 
+        
+        ####timer 같은거 (저장만 해뒀다가) 1초마다 합친다 
+        # timer_period = 1.0
+        # self.timer = self.create_timer(timer_period, self.diff_callback)
 
         for i in range(self.n):
             topic_name = f'/{self.maps_list[i]}'
@@ -28,6 +32,23 @@ class MergeMapNode(Node):
                 topic_name, 
                 lambda msg, l=i: self.map_callback(msg, l), 10))
             setattr(self, self.maps_list[i], None)
+
+        # self.timer = self.create_timer(1.0, self.topic_callback)
+
+    # def diff_callback(self, map_id):
+    #     if all(getattr(self, self.maps_list[j]) is not None for j in range(self.n) if j != map_id):  
+    #         maps = [getattr(self, self.maps_list[k]) for k in range(self.n)]
+    #         self.figure_out_diff(*maps)
+
+
+    def map_callback(self, msg, map_id):
+        setattr(self, self.maps_list[map_id], msg)
+        if all(getattr(self, self.maps_list[j]) is not None for j in range(self.n) if j != map_id):
+            maps = [getattr(self, self.maps_list[k]) for k in range(self.n)]
+            self.figure_out_diff(*maps)
+            rotated_maps = [self.rotate_map(getattr(self, self.maps_list[k]), self.theta[k]) for k in range(self.n)]  
+            merged_msg = self.merge_maps(*rotated_maps) 
+            self.publisher.publish(merged_msg)  
 
 
     def figure_out_diff(self, *maps):
@@ -68,8 +89,8 @@ class MergeMapNode(Node):
                 self.xd[0] = 0
                 self.yd[0] = 0
             else:
-                # best_map_unified = -1
-                # best_theta, best_xd, best_yd = None, None, None 
+                best_map_unified = -1
+                best_theta, best_xd, best_yd = None, None, None 
 
                 for i, r_parent in enumerate(self.map_data[0]['r_diff']):
                     for compare_k in range(len(self.map_data)): 
@@ -93,45 +114,45 @@ class MergeMapNode(Node):
 
 
 
-                        if (map_unified > 200):
+                        if (map_unified > 65):
                             self.get_logger().info(f'!!!!SUCCESS!!!! {map_unified}')
 
 
-                            theta_1to0 = self.matched_data[compare_k]['theta_diff'][n] - self.matched_data[compare_k]['base_theta_diff'][n]
-                            if (theta_1to0 >= 0):
-                                self.theta[compare_k] = round(theta_1to0 - PI, 2)
-                            else:
-                                self.theta[compare_k] = round(theta_1to0 + PI, 2)
-                                self.xd[compare_k] = self.matched_data[compare_k]['x_diff'][n]
-                                self.yd[compare_k] = self.matched_data[compare_k]['y_diff'][n]
+                        #     theta_1to0 = self.matched_data[compare_k]['theta_diff'][n] - self.matched_data[compare_k]['base_theta_diff'][n]
+                        #     if (theta_1to0 >= 0):
+                        #         self.theta[compare_k] = round(theta_1to0 - PI, 2)
+                        #     else:
+                        #         self.theta[compare_k] = round(theta_1to0 + PI, 2)
+                        #         self.xd[compare_k] = self.matched_data[compare_k]['x_diff'][n]
+                        #         self.yd[compare_k] = self.matched_data[compare_k]['y_diff'][n]
+
+                        #         self.get_logger().info(f'theta:{self.theta}')
+                        #         self.get_logger().info(f'   xd:{self.xd}')
+                        #         self.get_logger().info(f'   yd:{self.yd}')
+
+                        #         return
+
+
+
+                            if (map_unified > best_map_unified):
+                                best_map_unified = map_unified
+
+                                theta_1to0 = self.matched_data[compare_k]['theta_diff'][n] - self.matched_data[compare_k]['base_theta_diff'][n]
+                                if (theta_1to0 >= 0):
+                                    best_theta = round(theta_1to0 - PI, 2)
+                                else:
+                                    best_theta = round(theta_1to0 + PI, 2)
+                                best_xd = self.matched_data[compare_k]['x_diff'][n]
+                                best_yd = self.matched_data[compare_k]['y_diff'][n]
 
                                 self.get_logger().info(f'theta:{self.theta}')
                                 self.get_logger().info(f'   xd:{self.xd}')
                                 self.get_logger().info(f'   yd:{self.yd}')
-
-                                return
-
-
-
-                            # if (map_unified > best_map_unified):
-                            #     best_map_unified = map_unified
-
-                            #     theta_1to0 = self.matched_data[compare_k]['theta_diff'][n] - self.matched_data[compare_k]['base_theta_diff'][n]
-                            #     if (theta_1to0 >= 0):
-                            #         best_theta = round(theta_1to0 - PI, 2)
-                            #     else:
-                            #         best_theta = round(theta_1to0 + PI, 2)
-                            #     best_xd = self.matched_data[compare_k]['x_diff'][n]
-                            #     best_yd = self.matched_data[compare_k]['y_diff'][n]
-
-                            #     self.get_logger().info(f'theta:{self.theta}')
-                            #     self.get_logger().info(f'   xd:{self.xd}')
-                            #     self.get_logger().info(f'   yd:{self.yd}')
                         
-                # if (best_map_unified != -1):
-                #     self.theta[compare_k] = best_theta
-                #     self.xd[compare_k] = best_xd
-                #     self.yd[compare_k] = best_yd
+                if (best_map_unified != -1):
+                    self.theta[compare_k] = best_theta
+                    self.xd[compare_k] = best_xd
+                    self.yd[compare_k] = best_yd
                 #     self.get_logger().info('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
                 #     self.get_logger().info(f'theta:{self.theta}')
                 #     self.get_logger().info(f'   xd:{self.xd}')
@@ -315,16 +336,6 @@ class MergeMapNode(Node):
                                                         + (1 / ratio[merged_i]) * maps[k].data[i])  
 
         return merged_map
-
-
-    def map_callback(self, msg, map_id):
-        setattr(self, self.maps_list[map_id], msg)
-        if all(getattr(self, self.maps_list[j]) is not None for j in range(self.n) if j != map_id):
-            maps = [getattr(self, self.maps_list[k]) for k in range(self.n)]
-            self.figure_out_diff(*maps)
-            rotated_maps = [self.rotate_map(getattr(self, self.maps_list[k]), self.theta[k]) for k in range(self.n)]  
-            merged_msg = self.merge_maps(*rotated_maps) 
-            self.publisher.publish(merged_msg)  
 
 
 def main(args=None):
