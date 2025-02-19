@@ -106,8 +106,8 @@ class MergeMapNode(Node):
                         map_parent = self.rotate_map(getattr(self, f'map_copy0'), self.matched_data[compare_k]['base_theta_diff'][n])
                         map_child = self.rotate_map(getattr(self, f'map_copy{compare_k}'), self.matched_data[compare_k]['theta_diff'][n])
 
-                        self.get_logger().info('################################################')
-                        self.get_logger().info(f"theta0, theta1: { - self.matched_data[compare_k]['base_theta_diff'][n]}, { - self.matched_data[compare_k]['theta_diff'][n]}")
+                        # self.get_logger().info('################################################')
+                        # self.get_logger().info(f"theta0, theta1: { - self.matched_data[compare_k]['base_theta_diff'][n]}, { - self.matched_data[compare_k]['theta_diff'][n]}")
                         
                         map_unified = self.merge_two_maps(map_parent, map_child)
          
@@ -115,7 +115,7 @@ class MergeMapNode(Node):
 
 
                         if (map_unified > 65):
-                            self.get_logger().info(f'!!!!SUCCESS!!!! {map_unified}')
+                            # self.get_logger().info(f'!!!!SUCCESS!!!! {map_unified}')
 
 
                         #     theta_1to0 = self.matched_data[compare_k]['theta_diff'][n] - self.matched_data[compare_k]['base_theta_diff'][n]
@@ -145,18 +145,18 @@ class MergeMapNode(Node):
                                 best_xd = self.matched_data[compare_k]['x_diff'][n]
                                 best_yd = self.matched_data[compare_k]['y_diff'][n]
 
-                                self.get_logger().info(f'theta:{self.theta}')
-                                self.get_logger().info(f'   xd:{self.xd}')
-                                self.get_logger().info(f'   yd:{self.yd}')
+                                # self.get_logger().info(f'theta:{self.theta}')
+                                # self.get_logger().info(f'   xd:{self.xd}')
+                                # self.get_logger().info(f'   yd:{self.yd}')
                         
                 if (best_map_unified != -1):
                     self.theta[compare_k] = best_theta
                     self.xd[compare_k] = best_xd
                     self.yd[compare_k] = best_yd
-                #     self.get_logger().info('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-                #     self.get_logger().info(f'theta:{self.theta}')
-                #     self.get_logger().info(f'   xd:{self.xd}')
-                #     self.get_logger().info(f'   yd:{self.yd}')
+                    self.get_logger().info('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+                    self.get_logger().info(f'theta:{self.theta}')
+                    self.get_logger().info(f'   xd:{self.xd}')
+                    self.get_logger().info(f'   yd:{self.yd}')
 
 
     def cluster_map(self, map_data):
