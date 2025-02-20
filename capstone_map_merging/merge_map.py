@@ -46,9 +46,11 @@ class MergeMapNode(Node):
         if all(getattr(self, self.maps_list[j]) is not None for j in range(self.n) if j != map_id):
             maps = [getattr(self, self.maps_list[k]) for k in range(self.n)]
             self.figure_out_diff(*maps)
-            rotated_maps = [self.rotate_map(getattr(self, self.maps_list[k]), self.theta[k]) for k in range(self.n)]  
-            merged_msg = self.merge_maps(*rotated_maps) 
-            self.publisher.publish(merged_msg)  
+
+            if not all(value == 0 for value in self.xd) and all(value == 0 for value in self.yd):
+                rotated_maps = [self.rotate_map(getattr(self, self.maps_list[k]), self.theta[k]) for k in range(self.n)]  
+                merged_msg = self.merge_maps(*rotated_maps) 
+                self.publisher.publish(merged_msg)  
 
 
     def figure_out_diff(self, *maps):
@@ -153,10 +155,15 @@ class MergeMapNode(Node):
                     self.theta[compare_k] = best_theta
                     self.xd[compare_k] = best_xd
                     self.yd[compare_k] = best_yd
-                    self.get_logger().info('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+                    self.get_logger().info('@@SUCCESS@@SUCCESS@@SUCCESS@@SUCCESS@@SUCCESS@@SUCCESS@@SUCCESS@@')
                     self.get_logger().info(f'theta:{self.theta}')
                     self.get_logger().info(f'   xd:{self.xd}')
                     self.get_logger().info(f'   yd:{self.yd}')
+                else:
+                    self.get_logger().info('!!!FAIL!!!FAIL!!!FAIL!!!FAIL!!!FAIL!!!FAIL!!!FAIL!!!FAIL!!!FAIL!!!')
+                    # self.theta = None
+                    # self.xd = None
+                    # self.yd = None
 
 
     def cluster_map(self, map_data):
