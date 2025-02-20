@@ -13,8 +13,8 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name, 'launch'), glob('launch/*.py')),
-        # (os.path.join('share', package_name, 'config'), glob('config/*.lua')),
-        # (os.path.join('share', package_name, 'config'), glob('config/*.rviz')),
+        (os.path.join('share', package_name, 'config'), glob('config/*.lua')),
+        (os.path.join('share', package_name, 'config'), glob('config/*.rviz')),
 
     ],
     install_requires=['setuptools'],
@@ -26,7 +26,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'merge_map = capstone_map_merging.merge_map:main'
+            'merge_map = capstone_map_merging.merge_map:main',
+            'topic_publisher = capstone_map_merging.topic_publisher:main',
         ],
     },
 )

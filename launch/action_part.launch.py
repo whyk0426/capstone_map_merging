@@ -21,42 +21,42 @@ pi = math.pi
 
 def generate_launch_description():
     return LaunchDescription([
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution([
+                    FindPackageShare('capstone_map_merging'),
+                    'launch',
+                    'Lima_cartographer.launch.py'
+                ])
+            ),
+        ),
         # IncludeLaunchDescription(
         #     PythonLaunchDescriptionSource(
         #         PathJoinSubstitution([
         #             FindPackageShare('capstone_map_merging'),
         #             'launch',
-        #             'Lima_cartographer.launch.py'
+        #             'Alpha_cartographer.launch.py',
         #         ])
         #     ),
         # ),
-        # # IncludeLaunchDescription(
-        # #     PythonLaunchDescriptionSource(
-        # #         PathJoinSubstitution([
-        # #             FindPackageShare('capstone_map_merging'),
-        # #             'launch',
-        # #             'Alpha_cartographer.launch.py',
-        # #         ])
-        # #     ),
-        # # ),
-        # IncludeLaunchDescription(
-        #     PythonLaunchDescriptionSource(
-        #         PathJoinSubstitution([
-        #             FindPackageShare('capstone_map_merging'),
-        #             'launch',
-        #             'Romeo_cartographer.launch.py',
-        #         ])
-        #     ),
-        # ),
-        # IncludeLaunchDescription(
-        #     PythonLaunchDescriptionSource(
-        #         PathJoinSubstitution([
-        #             FindPackageShare('capstone_map_merging'),
-        #             'launch',
-        #             'United_map.launch.py'
-        #         ])
-        #     ),
-        # ),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution([
+                    FindPackageShare('capstone_map_merging'),
+                    'launch',
+                    'Romeo_cartographer.launch.py',
+                ])
+            ),
+        ),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                PathJoinSubstitution([
+                    FindPackageShare('capstone_map_merging'),
+                    'launch',
+                    'United_map.launch.py'
+                ])
+            ),
+        ),
     
 
         Node(
@@ -70,15 +70,18 @@ def generate_launch_description():
                 ("/map1", "/Romeo/map"),
                 ],
         ),
+        Node(
+            package='capstone_map_merging',
+            executable='topic_publisher',
+        ),
 
-
-        # Node(
-        #     package='tf2_ros',
-        #     executable='static_transform_publisher',
-        #     name='static_transform_publisher',
-        #     output='screen',
-        #     arguments=['0', '0', '0', '0', '0', '0', 'map', 'Lima_map']
-        # ),
+        Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='static_transform_publisher',
+            output='screen',
+            arguments=['0', '0', '0', '0', '0', '0', 'map', 'Lima_map']
+        ),
         # Node(
         #     package='tf2_ros',
         #     executable='static_transform_publisher',
@@ -87,11 +90,11 @@ def generate_launch_description():
         #     #arguments=['0', '0.5', '0', str(PI/4), '0', '0', 'map', 'Alpha_map'],
         #     arguments=['0', '0', '0', '0', '0', '0', 'map', 'Alpha_map']
         # ),
-        # Node(
-        #     package='tf2_ros',
-        #     executable='static_transform_publisher',
-        #     name='static_transform_publisher',
-        #     output='screen',
-        #     arguments=['0', '0', '0', '0', '0', '0', 'map', 'Romeo_map']
-        # ),
+        Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='static_transform_publisher',
+            output='screen',
+            arguments=['0', '0', '0', '0', '0', '0', 'map', 'Romeo_map']
+        ),
     ])
