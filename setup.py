@@ -27,7 +27,7 @@ setup(
     entry_points={
         'console_scripts': [
             'merge_map = capstone_map_merging.merge_map:main',
-            'topic_publisher = capstone_map_merging.topic_publisher:main',
+            'repulsive_force = capstone_map_merging.repulsive_force:main',
         ],
     },
 )

@@ -58,21 +58,26 @@ def generate_launch_description():
             ),
         ),
     
+        # # Map Merging
+        # Node(
+        #     package='capstone_map_merging',
+        #     executable='merge_map',
+        #     output='screen',
+        #     parameters=[{'use_sim_time': True}],
+        #     remappings=[
+        #         ("/map0", "/Lima/map"),
+        #         #("/map1", "/Alpha/map"),
+        #         ("/map1", "/Romeo/map"),
+        #         ],
+        # ),
 
+        # repulsive_potential_itself
         Node(
             package='capstone_map_merging',
-            executable='merge_map',
-            output='screen',
-            parameters=[{'use_sim_time': True}],
+            executable='repulsive_force',
             remappings=[
                 ("/map0", "/Lima/map"),
-                #("/map1", "/Alpha/map"),
-                ("/map1", "/Romeo/map"),
                 ],
-        ),
-        Node(
-            package='capstone_map_merging',
-            executable='topic_publisher',
         ),
 
         Node(
