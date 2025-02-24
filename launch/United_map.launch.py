@@ -8,7 +8,7 @@ from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
-    package_dir = get_package_share_directory('capstone_turtlebot_controller')
+    package_dir = get_package_share_directory('capstone_map_merging')
     rviz_config_dir = os.path.join(package_dir, 'config', 'united_map.rviz')
 
     return LaunchDescription([
