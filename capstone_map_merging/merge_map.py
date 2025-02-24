@@ -117,7 +117,7 @@ class MergeMapNode(Node):
 
 
                         if (map_unified > 65):
-                            # self.get_logger().info(f'!!!!SUCCESS!!!! {map_unified}')
+                            self.get_logger().info(f'!!!!SUCCESS!!!! {map_unified}')
 
 
                         #     theta_1to0 = self.matched_data[compare_k]['theta_diff'][n] - self.matched_data[compare_k]['base_theta_diff'][n]
@@ -170,7 +170,7 @@ class MergeMapNode(Node):
         points = []
         width = map_data.info.width
         height = map_data.info.height
-        eps = 40 * map_data.info.resolution
+        eps = 60 * map_data.info.resolution
 
         for y in range(height):
             for x in range(width):
@@ -187,7 +187,7 @@ class MergeMapNode(Node):
                     map_data.data[index] = -1
             return map_data
         
-        dbscan = DBSCAN(eps=eps, min_samples=1)
+        dbscan = DBSCAN(eps=eps, min_samples=3)
         labels = dbscan.fit_predict(points)
 
         cluster_sizes = {}
@@ -197,7 +197,7 @@ class MergeMapNode(Node):
             cluster_sizes[label] = (labels == label).sum()
 
         for label, size in cluster_sizes.items():
-            if size >= 5:
+            if size >= 7:
                 for (x, y), cluster_label in zip(points, labels):
                     if cluster_label == label:
                         index = y * width + x
